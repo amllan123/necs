@@ -1,6 +1,6 @@
 export const data = [
   {
-    "Branch Code": 550000,
+    "Branch Code": 550001,
     "Branch Name": "BHUBANESWAR RO",
     Address:
       "THE NEW INDIA ASSURANCE COMPANY LIMITED. Alok Bharati Towers,1st floor, Saheed Nagar,Bhubaneswar,751007",
@@ -8,7 +8,7 @@ export const data = [
     "Mobile No.": "4667894562",
   },
   {
-    "Branch Code": 550102,
+    "Branch Code": 550192,
     "Branch Name": "NIMAPARA BRANCH",
     Address:
       "THE NEW INDIA ASSURANCE COMPANY LIMITED. MAIN ROAD,NIMAPARA,PURI,752106",
