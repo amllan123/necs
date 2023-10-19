@@ -1,0 +1,26 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100px;
+  width: 150px;
+  /* Use rgba for transparency */
+  border-radius: 10px;
+  /* Add backdrop-filter for the glass effect */
+  -webkit-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.58);
+  -moz-box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.58);
+  box-shadow: 3px 5px 5px 0px rgba(0, 0, 0, 0.58);
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: space-around;
+    color: rgb(67, 67, 67);
+  }
+  .count {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}

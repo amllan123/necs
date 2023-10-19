@@ -1,0 +1,178 @@
+.agp {
+    padding: 10px;
+  
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+  
+      .heading {
+        font-size: 30px;
+        color: rgb(94, 94, 94);
+        font-weight: bold;
+      }
+  
+      .count {
+        font-size: 20px;
+        font-weight: bolder;
+      }
+    }
+  
+    .down {
+      margin-top: 10px;
+      padding: 5px;
+  
+      .tableNav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+  
+        .showCounter {
+        }
+  
+        .downloadButtons {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+  
+          .download {
+            outline: none;
+            border: none;
+            padding: 10px;
+            width: max-content;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #d0e7d2;
+  
+            &:hover {
+              background-color: #afcdb2;
+              transition: all ease 0.3s;
+            }
+          }
+        }
+  
+        .searchbar {
+          display: flex;
+          align-items: center;
+          padding: 5px;
+          border: 1px solid black;
+          border-radius: 5px;
+  
+          .search {
+            outline: none;
+            border: none;
+          }
+        }
+      }
+    }
+  
+    .table-container {
+      margin: 20px;
+  
+      .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 20px;
+  
+        th,
+        td {
+          padding: 10px ;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+  
+        th {
+          cursor: pointer;
+        }
+  
+        tr:hover {
+          background-color: #f5f5f5;
+        }
+      }
+    }
+  
+    /* Add this style for pagination */
+  .pagination {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 10px;
+    
+      button {
+        cursor: pointer;
+        padding: 5px 10px;
+        border: none;
+        background-color: #446e4b;
+        color: aliceblue;
+        border-radius: 5px;
+        margin-right: 5px;
+    
+        &:disabled {
+          background-color: #ccc;
+          cursor: not-allowed;
+        }
+      }
+    }
+    
+  
+    .dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+    }
+  
+    .dialog {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+      .dialogForm{
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+          
+          input{
+              outline: none;
+              padding: 5px;
+              margin-top: 5px;
+              width: 400px;
+          }
+          textarea{
+  
+              outline: none;
+              resize: None;
+              height: 40px;
+          }
+      }
+      button{
+          margin-top: 10px;
+          font-weight: bolder;
+          padding: 10px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          background-color: #446e4b;
+          color: aliceblue;
+  
+      }
+    }
+  
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  }
+  

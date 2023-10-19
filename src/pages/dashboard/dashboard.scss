@@ -1,0 +1,17 @@
+.dashboardContainer{
+    display: flex;
+  height: 100vh;
+    
+    .dashboardDatacontainer{
+        flex: 5;
+    
+        overflow-y: auto; /* Add this line to enable vertical scrolling */
+        padding: 20px;
+        .widgets{
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+    }
+}
