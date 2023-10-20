@@ -1,0 +1,54 @@
+.apllicationContainer {
+    
+  .ApplicationForLoan {
+    display: flex;
+    justify-content: space-around;
+    max-width: 800px;
+    margin: 0 auto;
+
+    .form-column {
+      flex: 1;
+      padding: 20px;
+      border: 1px solid #ddd;
+      margin: 10px;
+      box-sizing: border-box;
+
+      h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+    }
+
+  }
+  .center-button {
+    text-align: center;
+    margin-top: 20px; // Adjust as needed
+    
+    button{
+        padding: 10px;
+    background-color: teal;
+    border: none;
+    outline: none;
+    color: aliceblue;
+    &:hover{
+        background-color: rgb(8, 143, 143);
+        transition: all ease 0.3s;
+        cursor: pointer;
+        
+    }
+    }
+  }}

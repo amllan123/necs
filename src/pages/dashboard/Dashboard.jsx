@@ -15,6 +15,7 @@ import TypeofLoan from '../../components/masterlist/typeofloans/TypeofLoan'
 import Voucher from '../../components/masterlist/vouchernarration/Voucher'
 import MemberDetails from '../../components/processAndInput/memberdetails/MemberDetails'
 import ApplicationForLoan from '../../components/processAndInput/applicationForLoan/ApplicationForLoan'
+import SanctionOfLoan from '../../components/processAndInput/sanctionoflaon/SanctionOfLoan'
 
 const Dashboard = () => {
   const { category } = useParams()
@@ -25,7 +26,7 @@ const Dashboard = () => {
         <div className='dashboardDatacontainer'>
           <Navbar />
 
-          <div className="widgets">
+          {category!==("sanctionofloan") && <div className="widgets">
             <Widget icon={<PersonIcon />} color={"#80B3FF"} count={2500} title={"Total Members"} />
             <Widget icon={<BusinessIcon />} color={"#D0BFFF"} count={33} title={"Branches"} />
             <Widget icon={<PersonIcon />} color={"#C1D8C3"} count={2500} title={"Deposit Members"} />
@@ -33,7 +34,7 @@ const Dashboard = () => {
             <Widget icon={<PersonIcon />} color={"#CEDEBD"} count={2500} title={"Loan Defaulter"} />
             <Widget icon={<PersonIcon />} color={"#FFE17B"} count={2500} title={"Deposit Defaulter"} />
 
-          </div>
+          </div>}
 
           <div className="componentContainer">
 {/*------------------------------- MasterList-----------------------------------------  */}
@@ -47,6 +48,7 @@ const Dashboard = () => {
 {/* ------------------------------- Processes and Input ----------------------------------- */}
             {category === "memberdetail" && <MemberDetails/>}
             {category === "applicationforloan" && <ApplicationForLoan/>}
+            {category ==="sanctionofloan" && <SanctionOfLoan/>}
           </div>
         </div>
       </div>

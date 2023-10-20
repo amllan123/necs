@@ -1,0 +1,76 @@
+.sanctioncontainer {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  .topContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    input {
+      outline: none;
+    }
+  }
+
+  .bottomContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .bottomTopContainer {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .bottomMidContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      .bottomMidContainerLeft {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .bottomMidContainerLeftItems {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            input{
+                outline: none;
+              
+            }
+        }
+      }
+
+      .bottomMidContainerRight {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .bottomMidContainerRightItems {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            input{
+                outline: none;
+              
+            }
+        }
+      }
+    }
+  }
+  .button{
+    text-align: center;
+    margin-top: 20px;
+    button{
+        padding: 10px;
+        outline: none;
+        background-color: teal;
+        border: none;
+        border-radius: 5px;
+        color:aliceblue;
+        font-weight: bold;
+        cursor: pointer;
+    }
+  }
+}

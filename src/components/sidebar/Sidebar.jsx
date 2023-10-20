@@ -50,7 +50,7 @@ const Sidebar = () => {
               <li className="DropdownMenuListData"><Link to="/admin/parties">Parties</Link></li>
               <li className="DropdownMenuListData"><Link to="/admin/dpschm">Deposite Schemes</Link></li>
               <li className="DropdownMenuListData"><Link to="/admin/typeofloan">Type of Loans</Link></li>
-              <li className="DropdownMenuListData">Voucher Narrations</li>
+              <li className="DropdownMenuListData"><Link to="/admin/voucher">Voucher Narrations</Link></li>
               {/* Add more items as needed */}
             </ul>
           </li>
@@ -73,7 +73,7 @@ const Sidebar = () => {
             >
               <div className="DropdownMenuListData"><Link to="/admin/memberdetail">Member Details</Link></div>
               <li className="DropdownMenuListData"><Link to="/admin/applicationforloan">Application for Loan</Link></li>
-              <li className="DropdownMenuListData">Sanction Of Loan</li>
+              <li className="DropdownMenuListData"><Link to='/admin/sanctionofloan'>Sanction Of Loan</Link></li>
               <li className="DropdownMenuListData">Calculation of Interest</li>
               <li className="DropdownMenuListData">
                 Sent Deduction to Branches
