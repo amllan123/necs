@@ -1,13 +1,17 @@
 // CashTransaction.js
 
 import React, { useState } from 'react';
-import './cashtransaction.scss';
 
-const CashTransaction = () => {
+
+const DebitOrCredit = () => {
   const [formData, setFormData] = useState({
     date: '',
-    voucherType: '',
     voucherNo: '',
+    receiptSent: '',
+    debitCredit: '',
+    acName: '',
+    partyName: '',
+    details: '',
   });
 
   const [tableData, setTableData] = useState([
@@ -37,6 +41,8 @@ const CashTransaction = () => {
 
   return (
     <div className="cash-transaction-container">
+      <h2>Bank Transaction</h2>
+
       <form className="transaction-form" onSubmit={handleSubmit}>
         <label>Date:</label>
         <input
@@ -46,16 +52,6 @@ const CashTransaction = () => {
           onChange={handleInputChange}
         />
 
-        <label>Voucher Type:</label>
-        <select
-          name="voucherType"
-          value={formData.voucherType}
-          onChange={handleInputChange}
-        >
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-        </select>
-
         <label>Voucher No:</label>
         <input
           type="text"
@@ -63,6 +59,45 @@ const CashTransaction = () => {
           value={formData.voucherNo}
           onChange={handleInputChange}
         />
+
+        <label>Receipt/Sent:</label>
+        <input
+          type="text"
+          name="receiptSent"
+          value={formData.receiptSent}
+          onChange={handleInputChange}
+        />
+
+        <label>Debit/Credit:</label>
+        <input
+          type="text"
+          name="debitCredit"
+          value={formData.debitCredit}
+          onChange={handleInputChange}
+        />
+
+        <label>A/C Name:</label>
+        <input
+          type="text"
+          name="acName"
+          value={formData.acName}
+          onChange={handleInputChange}
+        />
+
+        <label>Party Name:</label>
+        <input
+          type="text"
+          name="partyName"
+          value={formData.partyName}
+          onChange={handleInputChange}
+        />
+
+        <label>Details:</label>
+        <textarea
+          name="details"
+          value={formData.details}
+          onChange={handleInputChange}
+        ></textarea>
 
         <button type="submit">Submit</button>
       </form>
@@ -103,4 +138,4 @@ const CashTransaction = () => {
   );
 };
 
-export default CashTransaction;
+export default DebitOrCredit;

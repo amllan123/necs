@@ -1,12 +1,11 @@
-// CashTransaction.js
+
 
 import React, { useState } from 'react';
-import './cashtransaction.scss';
 
-const CashTransaction = () => {
+
+const JournalTransaction = () => {
   const [formData, setFormData] = useState({
     date: '',
-    voucherType: '',
     voucherNo: '',
   });
 
@@ -37,6 +36,8 @@ const CashTransaction = () => {
 
   return (
     <div className="cash-transaction-container">
+      <h2>Journal Transaction</h2>
+
       <form className="transaction-form" onSubmit={handleSubmit}>
         <label>Date:</label>
         <input
@@ -45,16 +46,6 @@ const CashTransaction = () => {
           value={formData.date}
           onChange={handleInputChange}
         />
-
-        <label>Voucher Type:</label>
-        <select
-          name="voucherType"
-          value={formData.voucherType}
-          onChange={handleInputChange}
-        >
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-        </select>
 
         <label>Voucher No:</label>
         <input
@@ -103,4 +94,4 @@ const CashTransaction = () => {
   );
 };
 
-export default CashTransaction;
+export default JournalTransaction;

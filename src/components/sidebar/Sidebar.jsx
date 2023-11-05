@@ -115,10 +115,10 @@ const Sidebar = () => {
               <li className="DropdownMenuListData"><Link to="/admin/depositadjustment">Deposit Adjustmet</Link></li>
               <li className="DropdownMenuListData"><Link to="/admin/loanadjustment">Loan adjustment</Link></li>
               <li className="DropdownMenuListData"><Link to="/admin/membershipclosure">Membership Closure</Link></li>
-              <li className="DropdownMenuListData">Cash Transaction</li>
-              <li className="DropdownMenuListData">Bank Transaction</li>
-              <li className="DropdownMenuListData">Journal Transaction</li>
-              <li className="DropdownMenuListData">Debit /Credit Notes</li>
+              <li className="DropdownMenuListData"><Link to="/admin/cashtransaction">Cash Transaction</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/banktransaction">Bank Transaction</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/journaltransaction">Journal Transaction</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/debitorcreditnotes">Debit /Credit Notes</Link></li>
               <li className="DropdownMenuListData">Bulk SMS</li>
 
               {/* Add more items as needed */}

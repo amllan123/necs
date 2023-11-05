@@ -1,13 +1,16 @@
 // CashTransaction.js
 
 import React, { useState } from 'react';
-import './cashtransaction.scss';
 
-const CashTransaction = () => {
+
+const BankTransaction = () => {
   const [formData, setFormData] = useState({
     date: '',
     voucherType: '',
     voucherNo: '',
+    bankAccount: '',
+    chequeNo: '',
+    chequeDate: '',
   });
 
   const [tableData, setTableData] = useState([
@@ -37,6 +40,8 @@ const CashTransaction = () => {
 
   return (
     <div className="cash-transaction-container">
+      <h2>Bank Transaction</h2>
+
       <form className="transaction-form" onSubmit={handleSubmit}>
         <label>Date:</label>
         <input
@@ -61,6 +66,30 @@ const CashTransaction = () => {
           type="text"
           name="voucherNo"
           value={formData.voucherNo}
+          onChange={handleInputChange}
+        />
+
+        <label>Bank A/c:</label>
+        <input
+          type="text"
+          name="bankAccount"
+          value={formData.bankAccount}
+          onChange={handleInputChange}
+        />
+
+        <label>Cheque/DD No:</label>
+        <input
+          type="text"
+          name="chequeNo"
+          value={formData.chequeNo}
+          onChange={handleInputChange}
+        />
+
+        <label>Cheque/DD Date:</label>
+        <input
+          type="date"
+          name="chequeDate"
+          value={formData.chequeDate}
           onChange={handleInputChange}
         />
 
@@ -103,4 +132,4 @@ const CashTransaction = () => {
   );
 };
 
-export default CashTransaction;
+export default BankTransaction;

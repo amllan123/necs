@@ -24,6 +24,10 @@ import ClosureOfLoan from "../../components/processAndInput/closureloan/ClosureL
 import DepositAdjustment from "../../components/processAndInput/depositadjustment/DepositAdjustment";
 import LoanAdjustmentForm from "../../components/processAndInput/loanadjustment/LoanAdjustment";
 import MembershipClosure from "../../components/processAndInput/membershipclosure/MembershipClosure";
+import CashTransaction from "../../components/processAndInput/cashtransaction/CashTransaction";
+import BankTransaction from "../../components/processAndInput/banktransaction/BankTransaction";
+import JournalTransaction from "../../components/processAndInput/journalTransaction/JournalTransaction";
+import DebitOrCredit from "../../components/processAndInput/debitcreditnotes/DebitOrCredit";
 
 const Dashboard = () => {
   const { category } = useParams();
@@ -34,7 +38,7 @@ const Dashboard = () => {
         <div className="dashboardDatacontainer">
           <Navbar />
 
-          {category !== "sanctionofloan" &&
+          {/* {category !== "sanctionofloan" &&
             category !== "applicationforloan" &&
             category !== "calculationofinterest" &&
             category !== "sentdeduction" &&
@@ -43,6 +47,7 @@ const Dashboard = () => {
             category !== "closureofloan" &&
             category !== "depositadjustment" && 
             category !== "loanadjustment" &&
+            category !== "cashtransaction" &&
             (
               <div className="widgets">
                 <Widget
@@ -82,7 +87,7 @@ const Dashboard = () => {
                   title={"Deposit Defaulter"}
                 />
               </div>
-            )}
+            )} */}
 
           <div className="componentContainer">
             {/*------------------------------- MasterList-----------------------------------------  */}
@@ -105,6 +110,10 @@ const Dashboard = () => {
             {category === "depositadjustment" && <DepositAdjustment/>}
             {category === "loanadjustment" && <LoanAdjustmentForm/>}
             {category === "membershipclosure" && <MembershipClosure/>}
+            {category === "cashtransaction" && <CashTransaction/>}
+            {category === "banktransaction" && <BankTransaction/>}
+            {category === "journaltransaction" && <JournalTransaction/>}
+            {category === "debitorcreditnotes" && <DebitOrCredit/>}
           </div>
         </div>
       </div>
