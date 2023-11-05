@@ -1,0 +1,121 @@
+.applicationContainer {
+    .CalculationOfInterest {
+      display: flex;
+      justify-content: space-around;
+      flex-direction: column;
+      max-width: 800px;
+      margin: 0 auto;
+  
+      .form-column {
+        flex: 1;
+        padding: 20px;
+        border: 1px solid #ddd;
+        margin: 10px;
+        box-sizing: border-box;
+  
+        h2 {
+          font-size: 1.5em;
+          margin-bottom: 20px;
+        }
+  
+        label {
+          display: block;
+          margin-bottom: 10px;
+        }
+  
+        input,
+        select,
+        textarea {
+          width: 100%;
+          padding: 8px;
+          margin-bottom: 10px;
+          box-sizing: border-box;
+        }
+  
+        .downloadButtons {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+  
+          .download {
+            outline: none;
+            border: none;
+            padding: 10px;
+            width: max-content;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #d0e7d2;
+  
+            &:hover {
+              background-color: #afcdb2;
+              transition: all ease 0.3s;
+            }
+          }
+        }
+
+        .additionalField{
+          display: flex;
+          gap: 20px;
+          margin: 10px 0px;
+          font-weight: bold;
+          font-size: 20px;
+          align-items: center;
+          .additionalFieldData{
+            padding: 5px;
+            font-weight: normal;
+          }
+        }
+      }
+  
+      .table-container {
+        flex: 1;
+        overflow: auto;
+        margin: 10px;
+        box-sizing: border-box;
+  
+        table {
+          width: 100%;
+          border-collapse: collapse;
+  
+          th,
+          td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+          }
+  
+          th {
+            background-color: teal;
+            color: aliceblue;
+          }
+  
+          tbody {
+            tr:hover {
+              background-color: #f5f5f5;
+            }
+          }
+        }
+      }
+    }
+  
+    .center-button {
+      text-align: center;
+      margin-top: 20px;
+  
+      button {
+        padding: 10px;
+        background-color: teal;
+        border: none;
+        outline: none;
+        color: aliceblue;
+  
+        &:hover {
+          background-color: rgb(8, 143, 143);
+          transition: all ease 0.3s;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  

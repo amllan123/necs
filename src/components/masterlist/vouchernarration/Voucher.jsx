@@ -8,12 +8,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import { Tooltip } from "@mui/material";
-
+import { useEffect } from "react";
+import axios from "axios";
 // Main component definition
 const Voucher = () => {
-
     // State variables
+    const url = process.env.REACT_APP_API_URL;
+    const [data, setData] = useState([]);
+    const [accHeadData, setAccHeadData] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
@@ -23,23 +27,67 @@ const Voucher = () => {
 
     //Add Form Data
 
-    const [newName, setNewName] = useState(null);
-    const [newShortName, setNewShortName] = useState(null);
-    const [newAccountHead, setNewAccountHead] = useState(null);
+    const [newName, setNewName] = useState("");
+    const [newShortName, setNewShortName] = useState("");
+    const [newAccountHead, setNewAccountHead] = useState("");
+    const [ApiAccountHead, setApiAccountHead] = useState("")
 
-    //Update Form Data
+    // Update Form Data
+    const [objectId, setObjectId] = useState("");
+    const [updateName, setUpdateName] = useState("");
+    const [updateShortName, setUpdateShortName] = useState("");
+    const [updateAccountHead, setUpdateAccountHead] = useState("");
 
-    const [updateName, setUpdateName] = useState(null);
-    const [updateShortName, setUpdateShortName] = useState(null);
-    const [updateAccountHead, setUpdateAccountHead] = useState(null);
 
     // Options for the number of items per page
     const integerOptions = [5, 10, 25, 50, 100];
 
+    // Data Fetching and Processing
+const getData = async () => {
+            const res = await axios.get(`${url}/api/voucher/all`);
+            console.log(res.data);
+            setData(res.data);
+        };
+    useEffect(() => {
+        
+        const getAccHeadData = async () => {
+            const res = await axios.get(`${url}/api/accounthead/all`);
+            setAccHeadData(res.data);
+
+        };
+        getData();
+        getAccHeadData();
+    }, []);
+
     // Function to handle adding a new branch
-    const handleAddBranch = () => {
+    const handleAddVoucher = async () => {
+        const postdata={
+            name:newName,
+            shortname:newShortName,
+            accounthead:newAccountHead
+        }
+        const res = await axios.post(`${url}/api/voucher/add`,postdata);
+
+        getData()
         setIsDialogOpen(false);
     };
+    const handleUpdateVoucher = async () => { 
+        const postdata={
+            name:updateName,
+            shortname:updateShortName,
+            accounthead:updateAccountHead===""?ApiAccountHead:updateAccountHead
+        }
+        const res= await  axios.put(`${url}/api/voucher/update/${objectId}`,postdata)
+        getData()
+    }
+    const handleDeleteVoucher = async (id) => { 
+        try {
+            await axios.delete(`${url}/api/voucher/delete/${id}`);
+            setData((prev)=>prev.filter((item)=>item._id !==id));
+        } catch (error) {
+            
+        }
+    }
 
     // Function to handle dropdown change for items per page
     const handleDropdownChange = (e) => {
@@ -92,6 +140,7 @@ const Voucher = () => {
 
     // Slicing data based on pagination
     const visibleData = filteredData.slice(startIndex, endIndex);
+
 
     // JSX structure for the component
     return (
@@ -162,10 +211,10 @@ const Voucher = () => {
                     <tbody>
                         {/* Table rows with data */}
                         {visibleData.map((item) => (
-                            <tr key={item.id}>
-                                <td>{item.particulars}</td>
+                            <tr key={item._id}>
+                                <td>{item.name}</td>
                                 <td>{item.shortname}</td>
-                                <td>{item.accounthead}</td>
+                                <td>{item.accounthead.accountname}</td>
                                 <td>
                                     {/* Edit and delete buttons */}
                                     <Tooltip title="Edit">
@@ -179,9 +228,11 @@ const Voucher = () => {
                                             }}
                                             onClick={() => {
                                                 setIsEditOpen(true);
-                                                setUpdateName(item.particulars);
+                                                setUpdateName(item.name);
                                                 setUpdateShortName(item.shortname);
-                                                setUpdateAccountHead(item.accounthead);
+                                                setApiAccountHead(item.accounthead._id)
+                                                setObjectId(item._id)
+
                                                 // Added checkbox state
                                             }}
                                         >
@@ -189,7 +240,7 @@ const Voucher = () => {
                                         </button>
                                     </Tooltip>
                                     <Tooltip title="Delete">
-                                        {" "}
+
                                         <button
                                             className="delete"
                                             style={{
@@ -200,7 +251,7 @@ const Voucher = () => {
                                                 color: "red",
                                             }}
                                             onClick={() => {
-                                                setIsEditOpen(false);
+                                                handleDeleteVoucher(item._id)
                                             }}
                                         >
                                             <DeleteOutlineIcon />
@@ -257,15 +308,21 @@ const Voucher = () => {
                                 onChange={(e) => setNewShortName(e.target.value)}
                             />
                             <label htmlFor="accheadDropdown">Select Account Head</label>
-                            <select id="accheadDropdown" onChange={(e) => setNewAccountHead(e.target.value)}>
+                            <select
+                                id="accheadDropdown"
+                                onChange={(e) => setNewAccountHead(e.target.value)}
+                                value={newAccountHead}
+                            ><option value="" disabled>
+                                    Select an account
+                                </option>
                                 {accHeadData.map((i) => (
-                                    <option key={i.ID} value={i["Account Name"]}>
-                                        {i["Account Name"]}
+                                    <option key={i._id} value={i._id}>
+                                        {i.accountname}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                        <button onClick={handleAddBranch}>Add</button>
+                        <button onClick={handleAddVoucher}>Add</button>
                     </div>
                 </div>
             )}
@@ -294,15 +351,21 @@ const Voucher = () => {
                                 onChange={(e) => setUpdateShortName(e.target.value)}
                             />
                             <label htmlFor="accheadDropdown">Select Account Head</label>
-                            <select id="accheadDropdown" onChange={(e) => setUpdateAccountHead(e.target.value)}>
+                            <select
+                                id="accheadDropdown"
+                                onChange={(e) => setUpdateAccountHead(e.target.value)}
+                                value={updateAccountHead}
+                            ><option value="" disabled>
+                                    Select an account
+                                </option>
                                 {accHeadData.map((i) => (
-                                    <option key={i.ID} value={i["Account Name"]}>
-                                        {i["Account Name"]}
+                                    <option key={i._id} value={i._id}>
+                                        {i.accountname}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                        <button onClick={handleAddBranch}>Edit</button>
+                        <button onClick={handleUpdateVoucher}>Edit</button>
                     </div>
                 </div>
             )}

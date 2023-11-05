@@ -1,15 +1,18 @@
 // Import necessary dependencies and styles
-import React, { useState } from "react";
-import { partiesData as data } from "../../../DemoData/index";
+import React, { useEffect, useState } from "react";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import { Tooltip } from "@mui/material";
 import "./parties.scss";
+import axios from "axios";
 
 // Main component definition
 const Parties = () => {
   // State variables
+  const url = process.env.REACT_APP_API_URL;
+  const [data, setData] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(5);
@@ -20,15 +23,15 @@ const Parties = () => {
 
   //Add Form Data
 
-  const [newName, setNewName] = useState(null);
-  const [newType, setNewType] = useState(null);
-  const [newAddress, setNewAddress] = useState(null);
-  const [newMobile, setNewMobile] = useState(null);
-  const [newEmail, setNewEmail] = useState(null);
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState('');
+  const [newAddress, setNewAddress] = useState('');
+  const [newMobile, setNewMobile] = useState('');
+  const [newEmail, setNewEmail] = useState('');
   const [newChecklist, setNewChecklist] = useState(false);
 
   //Update Form Data
-
+  const [updateObjectId, setUpdateObjectId] = useState(null)
   const [updateName, setUpdateName] = useState(null);
   const [updateType, setUpdateType] = useState(null);
   const [updateAddress, setUpdateAddress] = useState(null);
@@ -39,11 +42,54 @@ const Parties = () => {
   // Options for the number of items per page
   const integerOptions = [5, 10, 25, 50, 100];
 
+  // Data Fetching and Processing
+  useEffect(() => {
+    const getData = async () => {
+      const res = await axios.get(`${url}/api/parties/all`);
+      setData(res.data);
+
+    };
+    getData();
+  }, []);
   // Function to handle adding a new branch
-  const handleAddBranch = () => {
+  const handleAddParty = async () => {
+    const postdata = {
+      name: newName,
+      email: newEmail,
+      type: newType,
+      address: newAddress,
+      mobileno: newMobile,
+      active: newChecklist,
+    };
+    try {
+      const res = await axios.post(`${url}/api/parties/add`, postdata);
+      setData((prev)=>[...prev,res.data.party])
+    } catch (error) {
+      console.log(error);
+    }
+
     setIsDialogOpen(false);
   };
+  const handleUpdateParty = async () => {
+    const postdata = {
+      name: updateName,
+      email: updateEmail,
+      type: updateType,
+      address: updateAddress,
+      mobileno: updateMobile,
+      active: updateChecklist,
+    };
+    const res = await axios.put(`${url}/api/parties/update/${updateObjectId}`, postdata);
+    setIsDialogOpen(false);
 
+  };
+  const handleDeleteParty = async (id) => {
+    try {
+      await axios.delete(`${url}/api/parties/delete/${id}`);
+
+      setData((prev) => prev.filter((item) => item._id !== id));
+    } catch (error) { }
+  };
   // Function to handle dropdown change for items per page
   const handleDropdownChange = (e) => {
     setSelectedValue(parseInt(e.target.value, 10));
@@ -101,7 +147,7 @@ const Parties = () => {
     <div className="agp">
       {/* Top section with heading and total count */}
       <div className="top">
-        <span className="heading">Account Groups</span>
+        <span className="heading">Parties</span>
         <span className="count">Total No of Data: {data.length}</span>
       </div>
 
@@ -160,19 +206,18 @@ const Parties = () => {
               <th onClick={() => handleSort("name")}>Name</th>
               <th onClick={() => handleSort("type")}>Type</th>
               <th onClick={() => handleSort("address")}>Address</th>
-              <th onClick={() => handleSort("mobile")}>Mobile</th>
+              <th onClick={() => handleSort("mobileno")}>Mobile</th>
               <th onClick={() => handleSort("email")}>Email</th>
-              <th>Checklist</th>
             </tr>
           </thead>
           <tbody>
             {/* Table rows with data */}
             {visibleData.map((item) => (
-              <tr key={item.id}>
+              <tr key={item._id}>
                 <td>{item.name}</td>
                 <td>{item.type}</td>
                 <td>{item.address}</td>
-                <td>{item.mobile}</td>
+                <td>{item.mobileno}</td>
                 <td>{item.email}</td>
                 <td>
                   {/* Edit and delete buttons */}
@@ -187,19 +232,20 @@ const Parties = () => {
                       }}
                       onClick={() => {
                         setIsEditOpen(true);
+                        setUpdateObjectId(item._id)
                         setUpdateName(item.name);
                         setUpdateType(item.type);
                         setUpdateAddress(item.address);
-                        setUpdateMobile(item.mobile);
+                        setUpdateMobile(item.mobileno);
                         setUpdateEmail(item.email);
-                        setUpdateChecklist(item.checklist); // Added checkbox state
+                        setUpdateChecklist(item.active); // Added checkbox state
                       }}
                     >
                       <EditIcon />
                     </button>
                   </Tooltip>
                   <Tooltip title="Delete">
-                    {" "}
+                    
                     <button
                       className="delete"
                       style={{
@@ -210,7 +256,7 @@ const Parties = () => {
                         color: "red",
                       }}
                       onClick={() => {
-                        setIsEditOpen(false);
+                        handleDeleteParty(item._id);
                       }}
                     >
                       <DeleteOutlineIcon />
@@ -252,7 +298,7 @@ const Parties = () => {
             >
               &times;
             </span>
-            <h2>Add Branch</h2>
+            <h2>Add Parties</h2>
             <div className="dialogForm">
               <input
                 type="text"
@@ -293,7 +339,7 @@ const Parties = () => {
                 />
               </label>
             </div>
-            <button onClick={handleAddBranch}>Add</button>
+            <button onClick={handleAddParty}>Add</button>
           </div>
         </div>
       )}
@@ -309,7 +355,7 @@ const Parties = () => {
             >
               &times;
             </span>
-            <h2>Edit Branch</h2>
+            <h2>Edit Parties</h2>
             <div className="dialogForm">
               <input
                 type="text"
@@ -345,7 +391,7 @@ const Parties = () => {
                 />
               </label>
             </div>
-            <button onClick={handleAddBranch}>Edit</button>
+            <button onClick={handleUpdateParty}>Edit</button>
           </div>
         </div>
       )}

@@ -45,12 +45,24 @@ const Sidebar = () => {
               <li className="DropdownMenuListData">
                 <Link to="/admin/branch">Branch</Link>
               </li>
-              <li className="DropdownMenuListData"><Link to="/admin/agp">Account Groups</Link></li>
-              <li className="DropdownMenuListData"><Link to="/admin/ahd">Account Heads</Link></li>
-              <li className="DropdownMenuListData"><Link to="/admin/parties">Parties</Link></li>
-              <li className="DropdownMenuListData"><Link to="/admin/dpschm">Deposite Schemes</Link></li>
-              <li className="DropdownMenuListData"><Link to="/admin/typeofloan">Type of Loans</Link></li>
-              <li className="DropdownMenuListData"><Link to="/admin/voucher">Voucher Narrations</Link></li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/agp">Account Groups</Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/ahd">Account Heads</Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/parties">Parties</Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/dpschm">Deposite Schemes</Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/typeofloan">Type of Loans</Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/voucher">Voucher Narrations</Link>
+              </li>
               {/* Add more items as needed */}
             </ul>
           </li>
@@ -71,21 +83,38 @@ const Sidebar = () => {
             <ul
               className={`DropdownMenuList ${showDropdown === 2 ? "show" : ""}`}
             >
-              <div className="DropdownMenuListData"><Link to="/admin/memberdetail">Member Details</Link></div>
-              <li className="DropdownMenuListData"><Link to="/admin/applicationforloan">Application for Loan</Link></li>
-              <li className="DropdownMenuListData"><Link to='/admin/sanctionofloan'>Sanction Of Loan</Link></li>
-              <li className="DropdownMenuListData">Calculation of Interest</li>
+              <div className="DropdownMenuListData">
+                <Link to="/admin/memberdetail">Member Details</Link>
+              </div>
               <li className="DropdownMenuListData">
-                Sent Deduction to Branches
+                <Link to="/admin/applicationforloan">Application for Loan</Link>
               </li>
               <li className="DropdownMenuListData">
-                Receipt Deduction from Branches
+                <Link to="/admin/sanctionofloan">Sanction Of Loan</Link>
               </li>
-              <li className="DropdownMenuListData">Receipt Of Collection</li>
-              <li className="DropdownMenuListData">Closure Of Loan</li>
-              <li className="DropdownMenuListData">Deposit Adjustmet</li>
-              <li className="DropdownMenuListData">Loan adjustment</li>
-              <li className="DropdownMenuListData">Membership Closure</li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/calculationofinterest">
+                  Calculation Of Interest
+                </Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/sentdeduction">
+                  Sent Deduction to Branches
+                </Link>
+              </li>
+              <li className="DropdownMenuListData">
+                <Link to="/admin/receiptdeduction">
+                  Receipt Deduction From Branches
+                </Link>
+              </li>
+
+              <li className="DropdownMenuListData">
+                <Link to="/admin/receiptcollection">Receipt Of Collection</Link>
+              </li>
+              <li className="DropdownMenuListData"><Link to="/admin/closureofloan">Closure Of Loan</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/depositadjustment">Deposit Adjustmet</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/loanadjustment">Loan adjustment</Link></li>
+              <li className="DropdownMenuListData"><Link to="/admin/membershipclosure">Membership Closure</Link></li>
               <li className="DropdownMenuListData">Cash Transaction</li>
               <li className="DropdownMenuListData">Bank Transaction</li>
               <li className="DropdownMenuListData">Journal Transaction</li>

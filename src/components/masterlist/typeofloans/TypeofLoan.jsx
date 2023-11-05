@@ -1,9 +1,6 @@
 // Import necessary dependencies and styles
-import React, { useState } from "react";
-import {
-  Loantypedata as data,
-  AccountGroupData as accHeadData,
-} from "../../../DemoData/index";
+import React, { useEffect, useState } from "react";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
@@ -11,10 +8,14 @@ import { Tooltip } from "@mui/material";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import axios from "axios";
 
 // Main component definition
 const TypeofLoan = () => {
   // State variables
+  const url = process.env.REACT_APP_API_URL;
+  const [data, setData] = useState([]);
+  const [accHeadData, setAccHeadData] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(5);
@@ -24,28 +25,92 @@ const TypeofLoan = () => {
   const [searchQuery, setSearchQuery] = useState(""); // New state for search
 
   // Add Form Data
-  const [newName, setNewName] = useState(null);
-  const [newShortName, setNewShortName] = useState(null);
-  const [newAccountHead, setNewAccountHead] = useState(null);
-  const [newInterest, setNewInterest] = useState(null);
-  const [newMaxLoan, setNewMaxLoan] = useState(null);
-  const [newMaxEMI, setNewMaxEMI] = useState(null);
+  const [newName, setNewName] = useState("");
+  const [newShortName, setNewShortName] = useState("");
+  const [newAccountHead, setNewAccountHead] = useState("");
+  const [newInterest, setNewInterest] = useState("");
+  const [newMaxLoan, setNewMaxLoan] = useState("");
+  const [newMaxEMI, setNewMaxEMI] = useState("");
 
   // Update Form Data
-  const [updateName, setUpdateName] = useState(null);
-  const [updateShortName, setUpdateShortName] = useState(null);
-  const [updateAccountHead, setUpdateAccountHead] = useState(null);
-  const [updateInterest, setUpdateInterest] = useState(null);
-  const [updateMaxLoan, setUpdateMaxLoan] = useState(null);
-  const [updateMaxEMI, setUpdateMaxEMI] = useState(null);
+  const [updateObjectId, setUpdateObjectId] = useState("");
+  const [updateName, setUpdateName] = useState("");
+  const [updateShortName, setUpdateShortName] = useState("");
+  const [updateAccountHead, setUpdateAccountHead] = useState("");
+  const [updateInterest, setUpdateInterest] = useState("");
+  const [updateMaxLoan, setUpdateMaxLoan] = useState("");
+  const [updateMaxEMI, setUpdateMaxEMI] = useState("");
+  const [ApiAccountHead, SetApiAccountHead] = useState()
 
   // Options for the number of items per page
   const integerOptions = [5, 10, 25, 50, 100];
 
+
+  // Data fetching and management
+
+  useEffect(() => {
+    const getData = async () => {
+      const res = await axios.get(`${url}/api/typeofloan/all`)
+
+      setData(res.data);
+    }
+    const getAccHeadData = async () => {
+      const res = await axios.get(`${url}/api/accounthead/all`);
+      setAccHeadData(res.data);
+    }
+    getData()
+    getAccHeadData()
+  }, [])
+
   // Function to handle adding a new branch
-  const handleAddBranch = () => {
-    setIsDialogOpen(false);
+ // Function to handle adding a new loan
+const handleAddLoan = async () => {
+  const postdata = {
+    name: newName,
+    shortname: newShortName,
+    accountHead: newAccountHead,
+    interest: newInterest,
+    maximumloan: newMaxLoan,
+    maximumemi: newMaxEMI
   };
+
+const res =  await axios.post(`${url}/api/typeofloan/add`, postdata);
+
+  // Fetch updated data after adding and merge with previous data
+   
+  setData(prevData => [...prevData, res.data]);
+
+  setIsDialogOpen(false);
+};
+
+const handleUpdateLoan = async () => {
+  const postdata = {
+    name: updateName,
+    shortname: updateShortName,
+    accountHead: updateAccountHead === "" ? ApiAccountHead : updateAccountHead,
+    interest: updateInterest,
+    maximumloan: updateMaxLoan,
+    maximumemi: updateMaxEMI
+  };
+
+  await axios.put(`${url}/api/typeofloan/update/${updateObjectId}`, postdata);
+
+  // Fetch updated data after updating and merge with previous data
+  const res = await axios.get(`${url}/api/typeofloan/all`);
+  setData(prevData => prevData.map(item => (item._id === updateObjectId ? { ...item, ...postdata } : item)));
+
+  setIsEditOpen(false);
+};
+
+const handleDeleteLoan = async (id) => {
+  await axios.delete(`${url}/api/typeofloan/delete/${id}`);
+
+  // Filter out the deleted item from previous data
+  setData(prevData => prevData.filter(item => item._id !== id));
+
+  setIsDialogOpen(false);
+};
+
 
   // Function to handle dropdown change for items per page
   const handleDropdownChange = (e) => {
@@ -166,22 +231,22 @@ const TypeofLoan = () => {
               {/* Table headers with sorting functionality */}
               <th onClick={() => handleSort("name")}>Loan Name</th>
               <th onClick={() => handleSort("shortname")}>Shortname</th>
-              <th onClick={() => handleSort("accounthead")}>Account Head</th>
+              <th onClick={() => handleSort("accountHead")}>Account Head</th>
               <th onClick={() => handleSort("interest")}>Interest Account</th>
-              <th onClick={() => handleSort("maxloan")}>Maximum Loan</th>
-              <th onClick={() => handleSort("maxemi")}>Maximum EMI</th>
+              <th onClick={() => handleSort("maximumloan")}>Maximum Loan</th>
+              <th onClick={() => handleSort("maximumemi")}>Maximum EMI</th>
             </tr>
           </thead>
           <tbody>
             {/* Table rows with data */}
             {visibleData.map((item) => (
-              <tr key={item.id}>
-                <td>{item.loanname}</td>
+              <tr key={item._id}>
+                <td>{item.name}</td>
                 <td>{item.shortname}</td>
-                <td>{item.accounthead}</td>
+                <td>{item.accountHead.accountname}</td>
                 <td>{item.interest}</td>
-                <td>{item.maxloan}</td>
-                <td>{item.maxemi}</td>
+                <td>{item.maximumloan}</td>
+                <td>{item.maximumemi}</td>
                 <td>
                   {/* Edit and delete buttons */}
                   <Tooltip title="Edit">
@@ -195,13 +260,14 @@ const TypeofLoan = () => {
                       }}
                       onClick={() => {
                         setIsEditOpen(true);
-                        setUpdateName(item.loanname);
+                        setUpdateName(item.name);
                         setUpdateShortName(item.shortname);
-                        setUpdateAccountHead(item.accounthead);
+                        setUpdateObjectId(item._id)
                         setUpdateInterest(item.interest)
-                        setUpdateMaxEMI(item.maxemi)
-                        setUpdateMaxLoan(item.maxloan)
-                     
+                        setUpdateMaxEMI(item.maximumemi)
+                        setUpdateMaxLoan(item.maximumloan)
+                        SetApiAccountHead(item.accountHead._id)
+
                         // Added checkbox state
                       }}
                     >
@@ -209,7 +275,7 @@ const TypeofLoan = () => {
                     </button>
                   </Tooltip>
                   <Tooltip title="Delete">
-                    {" "}
+
                     <button
                       className="delete"
                       style={{
@@ -220,7 +286,7 @@ const TypeofLoan = () => {
                         color: "red",
                       }}
                       onClick={() => {
-                        setIsEditOpen(false);
+                        handleDeleteLoan(item._id)
                       }}
                     >
                       <DeleteOutlineIcon />
@@ -286,14 +352,17 @@ const TypeofLoan = () => {
               <select
                 id="accheadDropdown"
                 onChange={(e) => setNewAccountHead(e.target.value)}
-              >
+                value={newAccountHead}
+              ><option value="" disabled>
+                  Select an account
+                </option>
                 {accHeadData.map((i) => (
-                  <option key={i.ID} value={i["Account Name"]}>
-                    {i["Account Name"]}
+                  <option key={i._id} value={i._id}>
+                    {i.accountname}
                   </option>
                 ))}
               </select>
-
+              {console.log(newAccountHead)}
               <label htmlFor="interestInput">Interest:</label>
               <input
                 type="number"
@@ -322,7 +391,7 @@ const TypeofLoan = () => {
               />
             </div>
 
-            <button onClick={handleAddBranch}>Add</button>
+            <button onClick={handleAddLoan}>Add</button>
           </div>
         </div>
       )}
@@ -362,11 +431,14 @@ const TypeofLoan = () => {
               <label htmlFor="accheadDropdown">Select Account Head:</label>
               <select
                 id="accheadDropdown"
-                onChange={(e) =>setUpdateAccountHead(e.target.value)}
-              >
+                onChange={(e) => setUpdateAccountHead(e.target.value)}
+                value={updateAccountHead}
+              ><option value="" disabled>
+                  Select an account
+                </option>
                 {accHeadData.map((i) => (
-                  <option key={i.ID} value={i["Account Name"]}>
-                    {i["Account Name"]}
+                  <option key={i._id} value={i._id}>
+                    {i.accountname}
                   </option>
                 ))}
               </select>
@@ -398,7 +470,7 @@ const TypeofLoan = () => {
                 onChange={(e) => setUpdateMaxEMI(e.target.value)}
               />
             </div>
-            <button onClick={handleAddBranch}>Edit</button>
+            <button onClick={handleUpdateLoan}>Edit</button>
           </div>
         </div>
       )}

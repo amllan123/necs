@@ -1,12 +1,11 @@
+//Import necessary dependencies and styles
+import React, { useEffect, useState } from "react";
 
-
- //Import necessary dependencies and styles
-import React, { useState } from "react";
-import {AccountGroupData as data} from "../../../DemoData/index";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
-import './accounthead.scss'
+import "./accounthead.scss";
+import axios from "axios";
 
 // Define constant for items per page
 const ITEMS_PER_PAGE = 5;
@@ -14,6 +13,8 @@ const ITEMS_PER_PAGE = 5;
 // Main component definition
 const AccountHead = () => {
   // State variables
+  const [data, setData] = useState([]);
+  const [accountgroupData, setAccountgroupData] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(5);
@@ -21,28 +22,91 @@ const AccountHead = () => {
   const [sortingColumn, setSortingColumn] = useState(null);
   const [sortingOrder, setSortingOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState(""); // New state for search
-
+  const url = process.env.REACT_APP_API_URL;
 
   //Add Form Data
-  const [newId,setNewId]= useState(null)
-  const [newAccountName,setNewAccountName]= useState(null)
-  const [newAccountType,setNewAccountType]= useState(null)
-  const [newAccountGroup,setNewAccountGroup]= useState(null)
-  
+  const [newId, setNewId] = useState("");
+  const [newAccountName, setNewAccountName] = useState("");
+  const [newAccountType, setNewAccountType] = useState("");
+  const [newAccountGroup, setNewAccountGroup] = useState("");
 
   //Update Form Data
-  const [updateId,setUpdateId]= useState(null)
-  const [updateAccountName,setUpdateAccountName]= useState(null)
-  const [updateAccountType,setUpdateAccountType]= useState(null)
-  const [updateAccountGroup,setUpdateAccountGroup]= useState(null)
+  // Update Form Data
+const [updateId, setUpdateId] = useState("");
+const [updateAccountName, setUpdateAccountName] = useState("");
+const [updateAccountType, setUpdateAccountType] = useState("");
+const [updateAccountGroup, setUpdateAccountGroup] = useState(""); // Initialize with an empty string
+
   // Options for the number of items per page
   const integerOptions = [5, 10, 25, 50, 100];
 
+  // Data fetcher and Processing
+  // Data fetcher and Processing
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${url}/api/accounthead/all`);
+        setData(res.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    const fetchAccountGroup = async () => {
+      try {
+        const res = await axios.get(`${url}/api/accountgroup/all`);
+        setAccountgroupData(res.data);
+
+      } catch (error) {
+        console.error("Error fetching account group data:", error);
+      }
+    };
+
+    fetchData();
+    fetchAccountGroup();
+
+    // Since there are no dependencies, there is no need for a cleanup function or dependencies array.
+  }, []);
+
   // Function to handle adding a new branch
-  const handleAddBranch = () => {
+  const handleAddACHEAD = async () => {
+    const postdata = {
+      accountname: newAccountName,
+      accounttype: newAccountType,
+      accountgroup: newAccountGroup,
+    };
+    try {
+      const res = await axios.post(`${url}/api/accounthead/add`, postdata);
+      setData((prev) => [...prev, res.data.accountHead])
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(postdata);
+
     setIsDialogOpen(false);
   };
+  const handleUpdateACHEAD = async () => {
+    const postdata = {
+      accountname: updateAccountName,
+      accountgroup: updateAccountGroup,
+      accounttype: updateAccountType
+    }
+    try {
+      const res = await axios.put(`${url}/api/accounthead/update/${updateId}`, postdata)
 
+    } catch (error) {
+      console.log(error);
+    }
+
+
+    setIsEditOpen(false);
+  };
+  const handleDeleteACHEAD = async (id) => {
+    await axios.delete(`${url}/api/accounthead/delete/${id}`);
+    setData((prev) => prev.filter((item) => item._id !== id))
+
+  };
   // Function to handle dropdown change for items per page
   const handleDropdownChange = (e) => {
     setSelectedValue(parseInt(e.target.value, 10));
@@ -63,12 +127,14 @@ const AccountHead = () => {
     const columnA = a[sortingColumn];
     const columnB = b[sortingColumn];
 
-    if (typeof columnA === 'string' && typeof columnB === 'string') {
+    if (typeof columnA === "string" && typeof columnB === "string") {
       // Compare strings
-      return sortingOrder === 'asc' ? columnA.localeCompare(columnB) : columnB.localeCompare(columnA);
+      return sortingOrder === "asc"
+        ? columnA.localeCompare(columnB)
+        : columnB.localeCompare(columnA);
     } else {
       // Custom comparison for non-strings
-      if (sortingOrder === 'asc') {
+      if (sortingOrder === "asc") {
         return columnA < columnB ? -1 : columnA > columnB ? 1 : 0;
       } else {
         return columnB < columnA ? -1 : columnB > columnA ? 1 : 0;
@@ -76,10 +142,13 @@ const AccountHead = () => {
     }
   });
 
+
   // Filtering logic for search
-  const filteredData = sortedData.filter(item => {
-    return Object.values(item).some(value =>
-      typeof value === 'string' && value.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = sortedData.filter((item) => {
+    return Object.values(item).some(
+      (value) =>
+        typeof value === "string" &&
+        value.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
 
@@ -126,7 +195,6 @@ const AccountHead = () => {
               onClick={() => {
                 setIsDialogOpen(true);
               }}
-           
             >
               Add
             </button>
@@ -152,29 +220,20 @@ const AccountHead = () => {
           <thead>
             <tr>
               {/* Table headers with sorting functionality */}
-              <th onClick={() => handleSort("ID")}>
-                ID 
-              </th>
-              <th onClick={() => handleSort("Account Name")}>
-                Account Name 
-              </th>
-              <th onClick={() => handleSort("Account Type")}>
-                Account Type
-              </th>
-              <th onClick={() => handleSort("Account Group")}>
-                Account Group
-              </th>
-             
+              <th onClick={() => handleSort("ID")}>ID</th>
+              <th onClick={() => handleSort("accountname")}>Account Name</th>
+              <th onClick={() => handleSort("accounttype")}>Account Type</th>
+              <th onClick={() => handleSort("accountgroup")}>Account Group</th>
             </tr>
           </thead>
           <tbody>
             {/* Table rows with data */}
-            {visibleData.map((item) => (
-              <tr key={item["ID"]}>
-                <td>{item["ID"]}</td>
-                <td>{item["Account Name"]}</td>
-                <td>{item["Account Type"]}</td>
-                <td>{item["Account Group"]}</td>
+            {visibleData.map((item, index) => (
+              <tr key={item._id}>
+                <td>{index + 1}</td>
+                <td>{item.accountname}</td>
+                <td>{item.accounttype}</td>
+                <td>{item.accountgroup.groupname}</td>
                 <td>
                   {/* Edit and delete buttons */}
                   <button
@@ -187,11 +246,10 @@ const AccountHead = () => {
                     }}
                     onClick={() => {
                       setIsEditOpen(true);
-                      setUpdateId(item["ID"])
-                      setUpdateAccountName(item["Account Name"])
-                      setUpdateAccountType(item["Account Type"])
-                      setUpdateAccountGroup(item["Account Group"])
-
+                      setUpdateId(item._id);
+                      setUpdateAccountName(item.accountname);
+                      setUpdateAccountType(item.accounttype);
+                      
                     }}
                   >
                     <EditIcon />
@@ -203,16 +261,15 @@ const AccountHead = () => {
                       border: "none",
                       outline: "none",
                       cursor: "pointer",
-                      color:"red"
+                      color: "red",
                     }}
                     onClick={() => {
-                      setIsEditOpen(false);
+                      handleDeleteACHEAD(item._id);
                     }}
                   >
                     <DeleteOutlineIcon />
                   </button>
                 </td>
-                
               </tr>
             ))}
           </tbody>
@@ -248,15 +305,43 @@ const AccountHead = () => {
             >
               &times;
             </span>
-            <h2>Add Branch</h2>
+            <h2>Add Account Head</h2>
             <div className="dialogForm">
-            <input type="text" placeholder="ID"  value={newId} onChange={(e)=>setNewId(e.target.value)} />
-              <input type="text" placeholder="Account Name" value={newAccountName} onChange={(e)=>setNewAccountName(e.target.value)} />
-              <textarea value={newAccountType} placeholder="Account Type" onChange={(e)=>setNewAccountType(e.target.value)} />
-              <input type="text" value={newAccountGroup} placeholder="Account Group" onChange={(e)=>setNewAccountGroup(e.target.value)} />
-              
+              <input
+                type="text"
+                placeholder="Account Name"
+                value={newAccountName}
+                onChange={(e) => setNewAccountName(e.target.value)}
+              />
+              <textarea
+                value={newAccountType}
+                placeholder="Account Type"
+                onChange={(e) => setNewAccountType(e.target.value)}
+              />
+              <select
+                name=""
+                id=""
+                onChange={(e) => {
+                  const selectedOption = accountgroupData.find(
+                    (group) => group.groupname === e.target.value
+                  );
+                  setNewAccountGroup(
+                    selectedOption ? selectedOption._id : null
+                  );
+                }}
+                value={newAccountGroup}
+              >
+                <option value="" disabled>
+                  Select an account
+                </option>
+                {accountgroupData.map((i) => (
+                  <option key={i._id} value={i.groupname}>
+                    {i.groupname}
+                  </option>
+                ))}
+              </select>
             </div>
-            <button onClick={handleAddBranch}>Add</button>
+            <button onClick={handleAddACHEAD}>Add</button>
           </div>
         </div>
       )}
@@ -273,15 +358,36 @@ const AccountHead = () => {
             >
               &times;
             </span>
-            <h2>Edit Branch</h2>
+            <h2>Edit Account Head</h2>
             <div className="dialogForm">
-              <input type="text"  value={updateId} onChange={(e)=>setUpdateId(e.target.value)} />
-              <input type="text" value={updateAccountName} onChange={(e)=>setUpdateAccountName(e.target.value)} />
-              <textarea value={updateAccountType} onChange={(e)=>setUpdateAccountType(e.target.value)} />
-              <input type="text" value={updateAccountGroup} onChange={(e)=>setUpdateAccountGroup(e.target.value)} />
-              
+              <input
+                type="text"
+                value={updateAccountName}
+                onChange={(e) => setUpdateAccountName(e.target.value)}
+              />
+              <textarea
+                value={updateAccountType}
+                onChange={(e) => setUpdateAccountType(e.target.value)}
+              />
+              <select
+                name=""
+                id=""
+                onChange={(e) => {
+                  setUpdateAccountGroup(e.target.value)}}
+                value={updateAccountGroup}
+              >
+                <option value="" disabled>
+                  Select an account
+                </option>
+                {accountgroupData.map((i) => (
+                  <option key={i._id} value={i._id}> {/* Change value to i._id */}
+                    {i.groupname}
+                  </option>
+                ))}
+              </select>
+
             </div>
-            <button onClick={handleAddBranch}>Edit</button>
+            <button onClick={handleUpdateACHEAD}>Update</button>
           </div>
         </div>
       )}
@@ -290,4 +396,4 @@ const AccountHead = () => {
 };
 
 // Export the component
-export default AccountHead
+export default AccountHead;

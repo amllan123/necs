@@ -1,6 +1,6 @@
 // Import necessary dependencies and styles
-import React, { useState } from "react";
-import { data } from "../../../DemoData/index";
+import React, { useEffect, useState } from "react";
+
 import "./branch.scss";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -8,6 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import axios from "axios";
 
 // Define constant for items per page
 const ITEMS_PER_PAGE = 5;
@@ -15,6 +16,7 @@ const ITEMS_PER_PAGE = 5;
 // Main component definition
 const Branch = () => {
   // State variables
+  const [data, setData] = useState([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(5);
@@ -22,6 +24,8 @@ const Branch = () => {
   const [sortingColumn, setSortingColumn] = useState(null);
   const [sortingOrder, setSortingOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState(""); // New state for search
+
+  const url = process.env.REACT_APP_API_URL;
 
   //Add Form Data
   const [newBranchId, setNewBranchId] = useState(null);
@@ -36,15 +40,88 @@ const Branch = () => {
   const [updateBranchAddress, setUpdateBranchAddress] = useState(null);
   const [updateBranchIncharge, setUpdateBranchIncharge] = useState(null);
   const [updateBranchMobile, setUpdateBranchMobile] = useState(null);
+  const [updateObjectId, SetUpdateObjectId] = useState(null);
+  const [deleteObjectId,setDeleteObjectId]=useState(null)
+
+  //Fetch api for data
+  const fetchData = async () => {
+    const res = await axios.get(`${url}/api/branch/all`);
+    setData(res.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // Options for the number of items per page
   const integerOptions = [5, 10, 25, 50, 100];
 
   // Function to handle adding a new branch
-  const handleAddBranch = () => {
+  const handleAddBranch = async () => {
+    const postdata = {
+      branchcode: newBranchId,
+      branchaddress: newBranchAddress,
+      branchname: newBranchName,
+      incharge: newBranchIncharge,
+      mobileno: newBranchMobile,
+    };
+    const res = await axios.post(`${url}/api/branch/add`, postdata);
+    setData((prevData) => [...prevData, res.data.branch]);
+  
+
     setIsDialogOpen(false);
   };
 
+  // Function to update branchdata
+  const handleUpdateBranch = async () => {
+    try {
+      const updateData = {
+        branchcode: updateBranchId,
+        branchaddress: updateBranchAddress,
+        branchname: updateBranchName,
+        incharge: updateBranchIncharge,
+        mobileno: updateBranchMobile,
+      };
+  
+      // Make a PUT request to update the branch
+      const response = await axios.put(`${url}/api/branch/update/${updateObjectId}`, updateData);
+      
+  
+      // Assuming your response contains the updated branch data
+      const updatedBranch = response.data.updatedBranch;
+  
+      // Update your data state
+      setData((prevData) => {
+        const updatedData = prevData.map((branch) =>
+          branch._id === updateObjectId ? updatedBranch : branch
+        );
+  
+        return updatedData;
+      });
+  
+      // Close the dialog
+      setIsEditOpen(false);
+    } catch (error) {
+      // Handle errors
+      console.error("Error:", error);
+    }
+  };
+
+  // function to handleDelete data
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${url}/api/branch/delete/${id}`);
+  
+      
+      setData((prevData) => prevData.filter((item) => item._id !== id));
+    } catch (error) {
+      console.error(error);
+      // Handle error here
+    }
+  };
+  
+  
   // Function to handle dropdown change for items per page
   const handleDropdownChange = (e) => {
     setSelectedValue(parseInt(e.target.value, 10));
@@ -113,11 +190,11 @@ const Branch = () => {
       "Mobile No",
     ];
     const rows = visibleData.map((item) => [
-      item["Branch Code"],
-      item["Branch Name"],
-      item["Address"],
-      item["In-Charge"],
-      item["Mobile No."],
+      item.branchcode,
+      item.branchname,
+      item.branchaddress,
+      item.incharge,
+      item.mobileno,
     ]);
 
     pdf.autoTable({
@@ -134,11 +211,12 @@ const Branch = () => {
     const ws = XLSX.utils.aoa_to_sheet([
       ["Branch ID", "Branch Name", "Address", "Incharge", "Mobile No"],
       ...visibleData.map((item) => [
-        item["Branch Code"],
-        item["Branch Name"],
-        item["Address"],
-        item["In-Charge"],
-        item["Mobile No."],
+        item.branchcode,
+        item.branchname,
+        item.branchaddress,
+        item.incharge,
+        item.mobileno,
+        ,
       ]),
     ]);
 
@@ -159,11 +237,12 @@ const Branch = () => {
       visibleData
         .map((item) =>
           [
-            item["Branch Code"],
-            item["Branch Name"],
-            item["Address"],
-            item["In-Charge"],
-            item["Mobile No."],
+            item.branchcode,
+            item.branchname,
+            item.branchaddress,
+            item.incharge,
+            item.mobileno,
+            ,
           ].join(",")
         )
         .join("\n");
@@ -223,11 +302,19 @@ const Branch = () => {
 
           {/* Buttons for download and add */}
           <div className="downloadButtons">
-            <button className="download" onClick={handleGenerateCSV}>CSV</button>
-            <button className="download" onClick={handleGenerateExcel}>Excel</button>
-            <button className="download" onClick={handleGeneratePdf}>Pdf</button>
-            <button className="download" onClick={handleCopyToClipboard}>Copy</button>
-            
+            <button className="download" onClick={handleGenerateCSV}>
+              CSV
+            </button>
+            <button className="download" onClick={handleGenerateExcel}>
+              Excel
+            </button>
+            <button className="download" onClick={handleGeneratePdf}>
+              Pdf
+            </button>
+            <button className="download" onClick={handleCopyToClipboard}>
+              Copy
+            </button>
+
             <button
               className="download"
               onClick={() => {
@@ -258,22 +345,22 @@ const Branch = () => {
           <thead>
             <tr>
               {/* Table headers with sorting functionality */}
-              <th onClick={() => handleSort("Branch Code")}>Branch ID</th>
-              <th onClick={() => handleSort("Branch Name")}>Branch Name</th>
-              <th onClick={() => handleSort("Address")}>Address</th>
-              <th onClick={() => handleSort("In-Charge")}>Incharge</th>
-              <th onClick={() => handleSort("Mobile No.")}>Mobile No</th>
+              <th onClick={() => handleSort("branchcode")}>Branch ID</th>
+              <th onClick={() => handleSort("branchname")}>Branch Name</th>
+              <th onClick={() => handleSort("branchaddress")}>Address</th>
+              <th onClick={() => handleSort("incharge")}>Incharge</th>
+              <th onClick={() => handleSort("mobileno")}>Mobile No</th>
             </tr>
           </thead>
           <tbody>
             {/* Table rows with data */}
             {visibleData.map((item) => (
-              <tr key={item["Branch Code"]}>
-                <td>{item["Branch Code"]}</td>
-                <td>{item["Branch Name"]}</td>
-                <td>{item["Address"]}</td>
-                <td>{item["In-Charge"]}</td>
-                <td>{item["Mobile No."]}</td>
+              <tr key={item._id}>
+                <td>{item.branchcode}</td>
+                <td>{item.branchname}</td>
+                <td>{item.branchaddress}</td>
+                <td>{item.incharge}</td>
+                <td>{item.mobileno}</td>
                 <td>
                   {/* Edit and delete buttons */}
                   <button
@@ -286,11 +373,12 @@ const Branch = () => {
                     }}
                     onClick={() => {
                       setIsEditOpen(true);
-                      setUpdateBranchId(item["Branch Code"]);
-                      setUpdateBranchName(item["Branch Name"]);
-                      setUpdateBranchAddress(item["Address"]);
-                      setUpdateBranchIncharge(item["In-Charge"]);
-                      setUpdateBranchMobile(item["Mobile No."]);
+                      setUpdateBranchId(item.branchcode);
+                      setUpdateBranchName(item.branchname);
+                      setUpdateBranchAddress(item.branchaddress);
+                      setUpdateBranchIncharge(item.incharge);
+                      setUpdateBranchMobile(item.mobileno);
+                      SetUpdateObjectId(item._id);
                     }}
                   >
                     <EditIcon />
@@ -305,7 +393,7 @@ const Branch = () => {
                       color: "red",
                     }}
                     onClick={() => {
-                      setIsEditOpen(false);
+                      handleDelete(item._id)
                     }}
                   >
                     <DeleteOutlineIcon />
@@ -422,7 +510,7 @@ const Branch = () => {
                 onChange={(e) => setUpdateBranchMobile(e.target.value)}
               />
             </div>
-            <button onClick={handleAddBranch}>Add</button>
+            <button onClick={handleUpdateBranch}>Update</button>
           </div>
         </div>
       )}

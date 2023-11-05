@@ -1,18 +1,18 @@
 // Import necessary dependencies and styles
-import React, { useState } from "react";
-import {
-    DepositeSchemeData as data,
-    AccountGroupData as accHeadData,
-} from "../../../DemoData/index";
+import React, { useEffect, useState } from "react";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SearchIcon from "@mui/icons-material/Search";
 import { Tooltip } from "@mui/material";
+import axios from "axios";
 
 // Main component definition
-const Parties = () => {
-
+const DepositeSchemes = () => {
     // State variables
+    const url = process.env.REACT_APP_API_URL;
+    const [data, setData] = useState([]);
+    const [accHeadData, setAccHeadData] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(5);
@@ -23,21 +23,87 @@ const Parties = () => {
 
     //Add Form Data
 
-    const [newName, setNewName] = useState(null);
-    const [newShortName, setNewShortName] = useState(null);
-    const [newAccountHead, setNewAccountHead] = useState(null);
+    const [newName, setNewName] = useState("");
+    const [newShortName, setNewShortName] = useState("");
+    const [newAccountHead, setNewAccountHead] = useState("");
 
     //Update Form Data
-
-    const [updateName, setUpdateName] = useState(null);
-    const [updateShortName, setUpdateShortName] = useState(null);
-    const [updateAccountHead, setUpdateAccountHead] = useState(null);
-
+    const [updateObjectId, setUpdateObjectId] = useState("")
+    const [updateName, setUpdateName] = useState("");
+    const [updateShortName, setUpdateShortName] = useState("");
+    const [updateAccountHead, setUpdateAccountHead] = useState("");
+    const [ApiAccountHead, ApisetAccountHead] = useState("")
+   
     // Options for the number of items per page
     const integerOptions = [5, 10, 25, 50, 100];
 
-    // Function to handle adding a new branch
-    const handleAddBranch = () => {
+    // Data Fetching and Processing
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const res = await axios.get(`${url}/api/deposite/all`);
+
+                setData(res.data);
+            } catch (error) { }
+        };
+        const getACHeadData = async () => {
+            try {
+                const res = await axios.get(`${url}/api/accounthead/all`);
+                setAccHeadData(res.data);
+                
+            } catch (error) { }
+        };
+
+        getData();
+        getACHeadData();
+    }, []);
+
+    
+    const handleAddDepositeScheme = async () => {
+        const postdata = {
+            name: newName,
+            shortname: newShortName,
+            accounthead: newAccountHead,
+        };
+
+        try {
+            const res = await axios.post(`${url}/api/deposite/add`, postdata);
+            setData((prev) => [...prev, res.data.depositScheme])
+        } catch (error) {
+
+        }
+        setIsDialogOpen(false);
+
+    };
+
+    const handleUpdateDepositeScheme =async() => {
+        const postdata = {
+            name: updateName,
+            shortname: updateShortName,
+            accounthead: updateAccountHead===""?ApiAccountHead:updateAccountHead
+
+        }
+        
+        try {
+            const res=await axios.put(`${url}/api/deposite/update/${updateObjectId}`,postdata);
+            const updatedData = res.data;
+
+        // Update the state with the new data
+      
+        } catch (error) {
+            
+        }
+
+        
+
+        setIsEditOpen(false);
+    };
+    const handleDeleteDepositeScheme =async (id) => {
+        try {
+            await axios.delete(`${url}/api/deposite/delete/${id}`);
+        } catch (error) {
+            
+        }
         setIsDialogOpen(false);
     };
 
@@ -155,17 +221,17 @@ const Parties = () => {
                             {/* Table headers with sorting functionality */}
 
                             <th onClick={() => handleSort("name")}>Name</th>
-                            <th onClick={() => handleSort("name")}>Shortname</th>
-                            <th onClick={() => handleSort("name")}>Account Head</th>
+                            <th onClick={() => handleSort("shortname")}>Shortname</th>
+                            <th onClick={() => handleSort("accounthead")}>Account Head</th>
                         </tr>
                     </thead>
                     <tbody>
                         {/* Table rows with data */}
                         {visibleData.map((item) => (
-                            <tr key={item.id}>
+                            <tr key={item._id}>
                                 <td>{item.name}</td>
                                 <td>{item.shortname}</td>
-                                <td>{item.accounthead}</td>
+                                <td>{item.accounthead.accountname}</td>
                                 <td>
                                     {/* Edit and delete buttons */}
                                     <Tooltip title="Edit">
@@ -178,10 +244,12 @@ const Parties = () => {
                                                 cursor: "pointer",
                                             }}
                                             onClick={() => {
+                                                setUpdateObjectId(item._id)
                                                 setIsEditOpen(true);
                                                 setUpdateName(item.name);
                                                 setUpdateShortName(item.shortname);
-                                                setUpdateAccountHead(item.accounthead);
+                                                ApisetAccountHead(item.accounthead._id)
+
                                                 // Added checkbox state
                                             }}
                                         >
@@ -189,7 +257,6 @@ const Parties = () => {
                                         </button>
                                     </Tooltip>
                                     <Tooltip title="Delete">
-                                        {" "}
                                         <button
                                             className="delete"
                                             style={{
@@ -200,7 +267,7 @@ const Parties = () => {
                                                 color: "red",
                                             }}
                                             onClick={() => {
-                                                setIsEditOpen(false);
+                                                handleDeleteDepositeScheme(item._id)
                                             }}
                                         >
                                             <DeleteOutlineIcon />
@@ -257,15 +324,22 @@ const Parties = () => {
                                 onChange={(e) => setNewShortName(e.target.value)}
                             />
                             <label htmlFor="accheadDropdown">Select Account Head</label>
-                            <select id="accheadDropdown" onChange={(e) => setNewAccountHead(e.target.value)}>
-                                {accHeadData.map((i) => (
-                                    <option key={i.ID} value={i["Account Name"]}>
-                                        {i["Account Name"]}
+                            <select
+                                id="accheadDropdown"
+                                onChange={(e) => setNewAccountHead(e.target.value)}
+                                value={newAccountHead} // Add this line
+                            >
+                                <option value="" disabled>
+                                    Select an account
+                                </option>
+                                {accHeadData.map((item) => (
+                                    <option key={item._id} value={item._id}>
+                                        {item.accountname}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                        <button onClick={handleAddBranch}>Add</button>
+                        <button onClick={handleAddDepositeScheme}>Add</button>
                     </div>
                 </div>
             )}
@@ -294,15 +368,22 @@ const Parties = () => {
                                 onChange={(e) => setUpdateShortName(e.target.value)}
                             />
                             <label htmlFor="accheadDropdown">Select Account Head</label>
-                            <select id="accheadDropdown" onChange={(e) => setUpdateAccountHead(e.target.value)}>
-                                {accHeadData.map((i) => (
-                                    <option key={i.ID} value={i["Account Name"]}>
-                                        {i["Account Name"]}
+                            <select
+                                id="accheadDropdown"
+                                onChange={(e) => setUpdateAccountHead(e.target.value)}
+                                value={updateAccountHead}
+                            >
+                                <option value="" disabled>
+                                    Select an account
+                                </option>
+                                {accHeadData.map((item) => (
+                                    <option key={item._id} value={item._id}>
+                                        {item.accountname}
                                     </option>
                                 ))}
                             </select>
                         </div>
-                        <button onClick={handleAddBranch}>Edit</button>
+                        <button onClick={handleUpdateDepositeScheme}>Edit</button>
                     </div>
                 </div>
             )}
@@ -311,4 +392,4 @@ const Parties = () => {
 };
 
 // Export the component
-export default Parties;
+export default DepositeSchemes;
